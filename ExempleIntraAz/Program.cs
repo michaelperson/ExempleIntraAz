@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddSingleton<IConfiguration>(s=> builder.Configuration); 
 builder.Services.AddAuthentication(
     options =>
             {

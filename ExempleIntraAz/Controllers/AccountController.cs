@@ -7,6 +7,12 @@ namespace ExempleIntraAz.Controllers
 {
     public class AccountController : Controller
     {
+        private IConfiguration _conf;
+        public AccountController( IConfiguration conf)
+        {
+
+            _conf = conf;
+        }
         public IActionResult AccessDenied(string ReturnUrl)
         {
             return View();
@@ -19,8 +25,18 @@ namespace ExempleIntraAz.Controllers
 
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            //await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            //await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            /*Workaround avec redirection vers l'url explicaite de déconnexion de Azure*/
+            await HttpContext.SignOutAsync(new AuthenticationProperties
+            {
+                RedirectUri = _conf["AzureAd:PostLogoutRedirectUri"]
+            });
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+
+
             return RedirectToAction("Login");
         }
         public IActionResult LoginWithMicrosoft()
